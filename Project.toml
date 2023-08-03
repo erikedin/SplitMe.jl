@@ -1,0 +1,4 @@
+name = "SplitMe"
+uuid = "fdf24b0b-f8b6-4db4-b429-a614bca35995"
+authors = ["Erik Edin <erikedin@users.noreply.github.com>"]
+version = "0.1.0"
