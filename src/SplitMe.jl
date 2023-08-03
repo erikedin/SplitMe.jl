@@ -24,9 +24,9 @@ module SplitMe
 
 function splitme(io::IO, maxbytes::Int)
     nextfileindex = 0
-    dir = Filesystem.mktempdir(; cleanup=false)
+    dir = Base.Filesystem.mktempdir(; cleanup=false)
     println("Files written to $(dir)")
-    Filesystem.cd(dir)
+    Base.Filesystem.cd(dir)
 
     while !eof(io)
         # Read maxbytes bytes from io
@@ -42,8 +42,29 @@ function splitme(io::IO, maxbytes::Int)
 end
 
 function splitme(path::String, maxbytes::Int)
-    open(path, r) do io
+    open(path, "r") do io
         splitme(io, maxbytes)
+    end
+end
+
+function unsplitme(partspath::String, outpath::String)
+    nextfileindex = 0
+
+    Base.Filesystem.cd(partspath)
+
+    open(outpath, "w") do io
+        while true
+            name = "$(lpad(nextfileindex, 4, '0')).bin"
+            if Base.Filesystem.isfile(name)
+                open(name, "r") do partio
+                    data = read(partio)
+                    write(io, data)
+                end
+            else
+                break
+            end
+            nextfileindex += 1
+        end
     end
 end
 
